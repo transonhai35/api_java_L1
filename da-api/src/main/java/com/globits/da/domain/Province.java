@@ -1,10 +1,13 @@
 package com.globits.da.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.globits.core.auditing.AuditableEntity;
 import com.globits.core.domain.BaseObject;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @Entity
 @Table(name = "province")
@@ -21,11 +24,13 @@ public class Province extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "codeProvince")
-    private String codeProvince;
-
     @Column(name = "name")
     private String name;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<District> districts;
+
 
     //getter and setter
 
@@ -40,14 +45,6 @@ public class Province extends AuditableEntity {
         this.id = id;
     }
 
-    public String getCodeProvince() {
-        return codeProvince;
-    }
-
-    public void setCodeProvince(String codeProvince) {
-        this.codeProvince = codeProvince;
-    }
-
     public String getName() {
         return name;
     }
@@ -55,5 +52,15 @@ public class Province extends AuditableEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public List<District> getDistricts() {
+        return districts;
+    }
+
+    public void setDistricts(List<District> districts) {
+        this.districts = districts;
+    }
+
+
 
 }

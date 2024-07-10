@@ -1,12 +1,10 @@
 package com.globits.da.rest;
 
 import com.globits.da.dto.ExportExcelDto;
-import org.apache.commons.collections4.MultiSet;
 import org.springframework.http.HttpHeaders;
 import com.globits.da.dto.MyFirstApiDto;
 import com.globits.da.service.impl.MyFirstApiServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 
 import java.io.BufferedReader;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.List;
 
 
@@ -31,7 +27,7 @@ public class RestMyFirstApiController {
     private MyFirstApiServiceImpl myFirstApiSvc;
 
     @RequestMapping(value = "/postMyFirstApi", method = RequestMethod.POST)
-    public ResponseEntity<MyFirstApiDto> save(MyFirstApiDto dto) {
+    public ResponseEntity<MyFirstApiDto> save(@RequestBody MyFirstApiDto dto) {
         MyFirstApiDto result = myFirstApiSvc.processMyFirstApi(dto);
         return new ResponseEntity<MyFirstApiDto>(result, HttpStatus.OK);
     }

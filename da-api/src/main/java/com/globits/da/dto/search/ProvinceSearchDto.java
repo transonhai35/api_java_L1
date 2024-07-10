@@ -5,7 +5,6 @@ import java.util.UUID;
 public class ProvinceSearchDto {
 
     private Long id;
-    private String codeProvince;
     private String name;
 
     public Long getId() {
@@ -14,14 +13,6 @@ public class ProvinceSearchDto {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCodeProvince() {
-        return codeProvince;
-    }
-
-    public void setCodeProvince(String codeProvince) {
-        this.codeProvince = codeProvince;
     }
 
     public String getName() {

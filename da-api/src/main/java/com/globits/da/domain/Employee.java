@@ -1,12 +1,16 @@
 package com.globits.da.domain;
 
-import com.globits.core.domain.BaseObject;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.time.LocalDateTime;
-import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.globits.core.auditing.AuditableEntity;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "employee")
@@ -27,7 +31,7 @@ public class Employee extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "code")
+    @Column(name = "code", unique = true)
     private String code;
 
     @Column(name = "name")
@@ -41,6 +45,24 @@ public class Employee extends AuditableEntity {
 
     @Column(name = "age")
     private Integer age;
+
+    @Column(name = "province_id", nullable = false)
+    private Long provinceId;
+
+    @Column(name = "district_id", nullable = false)
+    private Long districtId;
+
+    @Column(name = "commune_id", nullable = false)
+    private Long communeId;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+            name = "employee_certificate",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "certificate_id")
+    )
+    private List<Certificate> certificates;
+
 
 
     // Getters and Setters
@@ -93,6 +115,38 @@ public class Employee extends AuditableEntity {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Long getProvinceId() {
+        return provinceId;
+    }
+
+    public void setProvinceId(Long provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public Long getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
+    }
+
+    public Long getCommuneId() {
+        return communeId;
+    }
+
+    public void setCommuneId(Long communeId) {
+        this.communeId = communeId;
+    }
+
+    public List<Certificate> certificates() {
+        return certificates;
+    }
+
+    public void setEmployeeCertificate(List<Certificate> certificates) {
+        this.certificates = certificates;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.globits.da.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.globits.core.auditing.AuditableEntity;
 import com.globits.core.domain.BaseObject;
 
@@ -21,14 +22,13 @@ public class Commune extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "codeDistrict")
-    private String codeDistrict;
-
-    @Column(name = "codeCommune")
-    private String codeCommune;
-
     @Column(name = "name")
     private String name;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "district_id")
+    private District district;
 
     //getter and setter
 
@@ -43,20 +43,12 @@ public class Commune extends AuditableEntity {
         this.id = id;
     }
 
-    public String getCodeDistrict() {
-        return codeDistrict;
+    public District getDistrict() {
+        return district;
     }
 
-    public void setCodeDistrict(String codeDistrict) {
-        this.codeDistrict = codeDistrict;
-    }
-
-    public String getCodeCommune() {
-        return codeCommune;
-    }
-
-    public void setCodeCommune(String codeCommune) {
-        this.codeCommune = codeCommune;
+    public void setDistrict(District district) {
+        this.district = district;
     }
 
     public String getName() {
@@ -66,4 +58,6 @@ public class Commune extends AuditableEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }

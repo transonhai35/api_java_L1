@@ -1,25 +1,37 @@
 package com.globits.da.dto;
 
 import com.globits.core.dto.AuditableEntityDto;
+import com.globits.da.domain.Commune;
 import com.globits.da.domain.District;
 import com.globits.da.domain.Province;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DistrictDto extends AuditableEntityDto {
 
     private Long id;
-    private String codeProvince;
-    private String codeDistrict;
+    private Long provinceId;
+    private Province province;
     private String name;
+    private List<CommuneDto> communes;
+
 
     public DistrictDto() {}
 
     public DistrictDto(District district) {
         if (district != null) {
-
             this.id = district.getId();
-            this.codeProvince = district.getCodeProvince();
-            this.codeDistrict = district.getCodeDistrict();
+            this.provinceId = district.getProvince() != null ? district.getProvince().getId() : null;
             this.name = district.getName();
+
+            // Convert the raw values to Commune objects
+            if(district.getCommunes() != null){
+                this.communes = district.getCommunes().stream()
+                        .map(CommuneDto::new)
+                        .collect(Collectors.toList());
+            }
+
         }
     }
 
@@ -33,20 +45,20 @@ public class DistrictDto extends AuditableEntityDto {
         this.id = id;
     }
 
-    public String getCodeProvince() {
-        return codeProvince;
+    public Province getProvince() {
+        return province;
     }
 
-    public void setCodeProvince(String codeProvince) {
-        this.codeProvince = codeProvince;
+    public void setProvince(Province province) {
+        this.province = province;
     }
 
-    public String getCodeDistrict() {
-        return codeDistrict;
+    public Long getProvinceId() {
+        return provinceId;
     }
 
-    public void setCodeDistrict(String codeDistrict) {
-        this.codeDistrict = codeDistrict;
+    public void setProvinceId(Long provinceId) {
+        this.provinceId = provinceId;
     }
 
     public String getName() {
@@ -55,5 +67,13 @@ public class DistrictDto extends AuditableEntityDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<CommuneDto> getCommunes() {
+        return communes;
+    }
+
+    public void setCommunes(List<CommuneDto> communes) {
+        this.communes = communes;
     }
 }

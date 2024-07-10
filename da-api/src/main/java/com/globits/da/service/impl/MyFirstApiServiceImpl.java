@@ -14,17 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-
-
 @Service
 public class MyFirstApiServiceImpl implements MyFirstApiSercive {
-
-//    public MyFirstApiDto handlePostRequest(MyFirstApiDto myFirstApiDto) {
-//        if(myFirstApiDto != null) {
-//            return new MyFirstApiDto(myFirstApiDto) ;
-//        }
-//        return null;
-//    }
 
     @Override
     public MyFirstApiDto processMyFirstApi(MyFirstApiDto myFirstApiDto) {

@@ -20,4 +20,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("select new com.globits.da.dto.EmployeeDto(ed) from Employee ed")
     List<EmployeeDto> getAllEmployee();
 
+    boolean existsByCode(String code);
+
+
+
 }

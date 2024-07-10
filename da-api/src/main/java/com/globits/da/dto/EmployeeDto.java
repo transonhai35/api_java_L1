@@ -1,33 +1,76 @@
 package com.globits.da.dto;
 
 import com.globits.core.dto.AuditableEntityDto;
-import com.globits.core.dto.BaseObjectDto;
 import com.globits.da.domain.Employee;
+import com.globits.da.utils.validation.UniqueCode;
+import com.globits.da.utils.validation.ValidCommune;
+import com.globits.da.utils.validation.ValidDistrict;
+import com.globits.da.utils.validation.ValidProvince;
 
-import javax.persistence.Column;
-import org.joda.time.LocalDateTime;
-import java.util.UUID;
+import javax.validation.constraints.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@ValidDistrict
+@ValidCommune
 public class EmployeeDto extends AuditableEntityDto {
 
     private Long id;
+
+
+    @NotBlank(message = "Code cannot be null")
+    @Pattern(regexp = "^[a-zA-Z0-9]{6,10}$", message = "Code must be 6-10 characters long and contain no spaces")
+    @UniqueCode
     private String code;
+
+    @NotBlank(message = "Name cannot be null")
     private String name;
+
+    @NotBlank(message = "Email cannot be null")
+    @Email(message = "Email should be valid")
     private String email;
+
+    @NotBlank(message = "Phone cannot be null")
+    @Pattern(regexp = "^[0-9]{1,11}$", message = "Phone number must be up to 11 digits and contain only numbers")
     private String phone;
+
+    @NotNull(message = "Age cannot be null")
+    @Min(value = 0, message = "Age cannot be negative")
     private Integer age;
+
+    @NotNull(message = "Province cannot be null")
+    @ValidProvince
+    private Long provinceId;
+
+    @NotNull(message = "District cannot be null")
+    private Long districtId;
+
+    @NotNull(message = "Commune cannot be null")
+    private Long communeId;
+
+    private List<CertificateDto> certificates;
 
     public EmployeeDto() {}
 
-    public EmployeeDto(Employee entity) {
-        if (entity != null) {
+    public EmployeeDto(Employee employee) {
+        if (employee != null) {
+            this.id = employee.getId();
+            this.code = employee.getCode();
+            this.name = employee.getName();
+            this.email = employee.getEmail();
+            this.phone = employee.getPhone();
+            this.age = employee.getAge();
+            this.provinceId = employee.getProvinceId();
+            this.districtId = employee.getDistrictId();
+            this.communeId = employee.getCommuneId();
 
-            this.id = entity.getId();
-            this.code = entity.getCode();
-            this.name = entity.getName();
-            this.email = entity.getEmail();
-            this.phone = entity.getPhone();
-            this.age = entity.getAge();
+//          Convert the raw values to certificate objects
+//            if (employee.getCertificates() != null) {
+//                this.certificates = employee.getCertificates().stream()
+//                       .map(CertificateDto::new)
+//                        .collect(Collectors.toList());
+//            }
+
         }
     }
 
@@ -80,32 +123,36 @@ public class EmployeeDto extends AuditableEntityDto {
         this.age = age;
     }
 
-//
-//    public LocalDateTime getCreateDate() {
-//        return createDate;
-//    }
-//
-//    public void setCreateDate(LocalDateTime createDate) {
-//        this.createDate = createDate;
-//    }
-//
-//    public String getCreatedBy() {
-//        return createdBy;
-//    }
-//
-//    public void setCreatedBy(String createdBy) {
-//        this.createdBy = createdBy;
-//    }
+    public Long getProvinceId() {
+        return provinceId;
+    }
 
-    @Override
-    public String toString() {
-        return "MyEmplayeeDTO{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                ", age=" + age + '\'' +
-                ", email=" + email + '\'' +
-                ", phone=" + phone +
-                '}';
+    public void setProvinceId(Long provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public Long getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
+    }
+
+    public Long getCommuneId() {
+        return communeId;
+    }
+
+    public void setCommuneId(Long communeId) {
+        this.communeId = communeId;
+    }
+
+    public List<CertificateDto> getCertificates(){
+        return certificates;
+    }
+
+    public  void setCertificates( List<CertificateDto> certificates){
+        this.certificates = certificates;
     }
 
 }

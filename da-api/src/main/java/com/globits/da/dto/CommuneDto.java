@@ -3,13 +3,16 @@ package com.globits.da.dto;
 import com.globits.core.dto.AuditableEntityDto;
 import com.globits.core.dto.BaseObjectDto;
 import com.globits.da.domain.Commune;
+import com.globits.da.domain.District;
 import com.globits.da.domain.Province;
+
+
 
 public class CommuneDto extends AuditableEntityDto {
 
     private Long id;
-    private String codeDistrict;
-    private String codeCommune;
+    private Long districtId;
+    private District district;
     private String name;
 
     public CommuneDto() {}
@@ -18,11 +21,12 @@ public class CommuneDto extends AuditableEntityDto {
         if (commune != null) {
 
             this.id = commune.getId();
-            this.codeDistrict = commune.getCodeDistrict();
-            this.codeCommune = commune.getCodeCommune();
+            this.districtId = commune.getDistrict() != null ? commune.getDistrict().getId() : null;
             this.name = commune.getName();
+
         }
     }
+
 
     //getter and setter
 
@@ -34,20 +38,20 @@ public class CommuneDto extends AuditableEntityDto {
         this.id = id;
     }
 
-    public String getCodeCommune() {
-        return codeCommune;
+    public Long getDistrictId() {
+        return districtId;
     }
 
-    public void setCodeCommune(String codeCommune) {
-        this.codeCommune = codeCommune;
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
     }
 
-    public String getCodeDistrict() {
-        return codeDistrict;
+    public District getDistrict() {
+        return district;
     }
 
-    public void setCodeDistrict(String codeDistrict) {
-        this.codeDistrict = codeDistrict;
+    public void setDistrict(District district) {
+        this.district = district;
     }
 
     public String getName() {
