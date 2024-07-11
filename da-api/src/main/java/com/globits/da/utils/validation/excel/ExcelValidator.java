@@ -25,7 +25,7 @@ public class ExcelValidator {
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         Pattern pattern = Pattern.compile(emailRegex);
         if (email == null || !pattern.matcher(email).matches()) {
-            errorMessages.add("Invalid email format at element " + rowNum);
+            errorMessages.add("Invalid email format at row " + rowNum);
             return false;
         }
         return true;
@@ -33,7 +33,7 @@ public class ExcelValidator {
 
     public static boolean validatePhone(String phone, List<String> errorMessages, int rowNum) {
         if (phone == null || !phone.matches("^[0-9]{1,11}$")) {
-            errorMessages.add("Invalid phone format at element " + rowNum);
+            errorMessages.add("Invalid phone format at row " + rowNum);
             return false;
         }
         return true;
@@ -41,7 +41,7 @@ public class ExcelValidator {
 
     public static boolean validateAge(int age, List<String> errorMessages, int rowNum) {
         if (age < 0) {
-            errorMessages.add("Invalid age at element " + rowNum + ": must be non-negative");
+            errorMessages.add("Invalid age at row " + rowNum + ": must be non-negative");
             return false;
         }
         return true;

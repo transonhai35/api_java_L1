@@ -187,20 +187,20 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
 
                 // Set provinceId
                 if (!provinceRepo.existsById(dto.getProvinceId())) {
-                    errorMessages.add("Province not found at element " + index);
+                    errorMessages.add("Province not found at row " + index);
                     continue;
                 }
                 employeeDto.setProvinceId(dto.getProvinceId());
 
                 // Set district and districtId
                 if (!districtRepo.existsById(dto.getDistrictId())) {
-                    errorMessages.add("District not found at elemet " + index);
+                    errorMessages.add("District not found at row " + index);
                     continue;
                 }
 
 
                 if (!districtRepo.existsByIdAndProvinceId(dto.getDistrictId(), dto.getProvinceId())) {
-                    errorMessages.add("District does not belong to the specified Province at element " + index);
+                    errorMessages.add("District does not belong to the specified Province at row " + index);
                     continue;
                 }
 
@@ -209,12 +209,12 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
 
                 // Set commune and communeId
                 if (!communeRepo.existsById(dto.getCommuneId())) {
-                    errorMessages.add("Commune not found at element " + index);
+                    errorMessages.add("Commune not found at row " + index);
                     continue;
                 }
 
                 if (!communeRepo.existsByIdAndDistrictId(dto.getCommuneId(), dto.getDistrictId())) {
-                    errorMessages.add("Commune does not belong to the specified District at element " + index);
+                    errorMessages.add("Commune does not belong to the specified District at row " + index);
                     continue;
                 }
 
@@ -232,6 +232,8 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
                 entity.setProvinceId(dto.getProvinceId());
                 entity.setDistrictId(dto.getDistrictId());
                 entity.setCommuneId(dto.getCommuneId());
+
+                entity = employeeRepo.save(entity);
 
                 employees.add(entity);
                 index++;
