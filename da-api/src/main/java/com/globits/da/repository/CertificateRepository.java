@@ -18,7 +18,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     @Query("SELECT COUNT(c) FROM Certificate c WHERE c.employee.id = :employeeId AND c.name = :name AND c.expired IS TRUE ")
     long countCertificateStillValidated(@Param("employeeId") Long employeeId, @Param("name") String name);
 
-    @Query("SELECT c FROM Certificate c WHERE c.name = :name AND c.province.id = :provinceId AND c.validTo IS NULL AND c.employee.id = :employeeId")
+    @Query("SELECT c FROM Certificate c WHERE c.name = :name AND c.province.id = :provinceId AND c.expired IS TRUE AND c.employee.id = :employeeId")
     Certificate checkExpiredCertificateByProvinceId(@Param("name") String name, @Param("provinceId") Long provinceId, @Param("employeeId") Long employeeId);
 
 }

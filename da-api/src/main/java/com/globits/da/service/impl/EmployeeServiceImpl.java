@@ -17,13 +17,23 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.logging.Logger;
+
 
 
 
@@ -54,43 +64,8 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
 
     @Override
     public List<EmployeeDto> searchEmployee(EmployeeSearchDto searchDto){
-        List<EmployeeDto> listEmployee = employeeRepo.getAllEmployee();
-        List<EmployeeDto> resultEmployee = new ArrayList<EmployeeDto>();
-
         if(searchDto != null) {
-            for(EmployeeDto employeeDto : listEmployee){
-                if (searchDto.getId() != null) {
-                    if(employeeDto.getId().equals(searchDto.getId())){
-                        resultEmployee.add(employeeDto);
-                    }
-                }
-                if (searchDto.getCode() != null) {
-                    if(employeeDto.getCode().equals(searchDto.getCode())){
-                        resultEmployee.add(employeeDto);
-                    }
-                }
-                if (searchDto.getName() != null) {
-                    if(employeeDto.getName().equals(searchDto.getName())){
-                        resultEmployee.add(employeeDto);
-                    }
-                }
-                if (searchDto.getEmail() != null) {
-                    if(employeeDto.getEmail().equals(searchDto.getEmail())){
-                        resultEmployee.add(employeeDto);
-                    }
-                }
-                if (searchDto.getPhone() != null) {
-                    if(employeeDto.getPhone().equals(searchDto.getPhone())){
-                        resultEmployee.add(employeeDto);
-                    }
-                }
-                if (searchDto.getAge() != null) {
-                    if(employeeDto.getAge() == searchDto.getAge()){
-                        resultEmployee.add(employeeDto);
-                    }
-                }
-            }
-            return resultEmployee;
+            return employeeRepo.findAllByCriteria(searchDto);
         }
 
         return null;
@@ -248,7 +223,50 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
     }
 
 
+    @Override
+    public Object export(HttpServletResponse response) throws IOException {
+        List<Employee> employees = employeeRepo.findAll();
+
+           try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+               Sheet sheet = workbook.createSheet("Employees");
+
+               Row headerRow = sheet.createRow(0);
+               String[] headers = {"STT", "Tên", "Mã", "Email", "Phone", "Tuổi"};
+               for (int i = 0; i < headers.length; i++) {
+                   headerRow.createCell(i).setCellValue(headers[i]);
+               }
+
+               int rowIdx = 1;
+               int stt = 1;
+               for (Employee employee : employees) {
+                   Row row = sheet.createRow(rowIdx++);
+
+                   row.createCell(0).setCellValue(stt++);
+                   row.createCell(1).setCellValue(employee.getName());
+                   row.createCell(2).setCellValue(employee.getCode());
+                   row.createCell(3).setCellValue(employee.getEmail());
+                   row.createCell(4).setCellValue(employee.getPhone());
+                   row.createCell(5).setCellValue(employee.getAge());
+               }
+
+               response.setContentType("application/octet-stream");
+               String key = "Content-Disposition";
+               String value = "attachment;filename=employees.xlsx";
+               response.setHeader(key, value);
+
+               ServletOutputStream result = response.getOutputStream();
+
+               workbook.write(result);
+               workbook.close();
+               result.close();
+
+               return HttpStatus.OK;
+           }
+
+    }
+
+
+
 }
 
 
- 

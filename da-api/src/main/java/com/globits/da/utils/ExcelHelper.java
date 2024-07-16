@@ -1,11 +1,13 @@
 package com.globits.da.utils;
 
 import com.globits.da.dto.EmployeeDto;
+import com.globits.da.dto.ExportExcelDto;
 import com.sun.istack.NotNull;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import java.util.List;
 
 public class ExcelHelper {
 
-            public static List<EmployeeDto> excelToEmployees(MultipartFile file){
+    public static List<EmployeeDto> excelToEmployees(MultipartFile file){
                 List<EmployeeDto> employees = new ArrayList<>();
                 try {
                     Workbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -70,7 +72,6 @@ public class ExcelHelper {
                     return null;
                 }
             }
-
 
 }
 

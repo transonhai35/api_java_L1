@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,5 +29,6 @@ public interface EmployeeService extends GenericService<Employee, Long> {
     public Boolean destroyEmployee(Long id);
     public EmployeeDto saveEmployee(EmployeeDto employeeDto, Long id);
     public ImportResultDto saveEmployeesFromExcel(List<EmployeeDto> dto);
+    public Object export(HttpServletResponse response) throws IOException;
 
 }

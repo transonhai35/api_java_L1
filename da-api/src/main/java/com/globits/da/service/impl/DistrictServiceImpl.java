@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,9 +98,16 @@ public class DistrictServiceImpl extends GenericServiceImpl<District, Long> impl
             entity = districtRepo.save(entity);
 
             // Save or update Commune
+            // Save or update Communes
             if (dto.getCommunes() != null) {
                 final District finalEntity = entity;
-                List<Commune> communes = dto.getCommunes().stream().map(communeDto -> {
+
+                if (finalEntity.getCommunes() == null) {
+                    finalEntity.setCommunes(new ArrayList<>());
+                }
+
+                // Thêm mới hoặc cập nhật các Commune hiện tại
+                dto.getCommunes().forEach(communeDto -> {
                     Commune commune = null;
                     if (communeDto.getId() != null) {
                         commune = communeRepo.findById(communeDto.getId()).orElse(null);
@@ -110,14 +118,17 @@ public class DistrictServiceImpl extends GenericServiceImpl<District, Long> impl
                     }
 
                     commune.setName(communeDto.getName());
-                    commune.setDistrict(finalEntity); // Set parent Province
-                    return communeRepo.save(commune);
-                }).collect(Collectors.toList());
+                    commune.setDistrict(finalEntity); // Set parent District
 
-                // Set the updated list of Districts to the Province entity
-                entity.setCommunes(communes);
+                    // Kiểm tra nếu commune đã tồn tại trong danh sách hiện tại
+                    if (!finalEntity.getCommunes().contains(commune)) {
+                        communeRepo.save(commune);
+                        finalEntity.getCommunes().add(commune);
+                    }
+                });
+
+                entity = districtRepo.save(finalEntity);
             }
-
             return new DistrictDto(entity);
         }
         return null;

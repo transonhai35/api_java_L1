@@ -1,23 +1,27 @@
 package com.globits.da.rest;
 
 import com.globits.da.dto.EmployeeDto;
+import com.globits.da.dto.ErrorDetailDto;
 import com.globits.da.dto.ImportResultDto;
 import com.globits.da.dto.ResponseDto;
 import com.globits.da.dto.search.EmployeeSearchDto;
 import com.globits.da.service.EmployeeService;
 import com.globits.da.utils.ExcelHelper;
-import com.globits.da.utils.validation.ExcelValidator;
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
-import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,31 +64,26 @@ public class RestEmployeeController {
         return new ResponseEntity<EmployeeDto>(result, HttpStatus.CREATED);
     }
 
-    @ExceptionHandler(BindException.class)
-    public  ResponseEntity<ResponseDto> handleBindException(BindException err) {
-        List<String[]> listErrorDetails = new ArrayList<>();
-        List<String[]> listTypeErrorDetails = new ArrayList<>();
-        List<String[]> listTotalErrorDetails = new ArrayList<>();
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseDto> handleException(Exception ex) {
+        List<ErrorDetailDto> errors = new ArrayList<>();
+        errors.add(new ErrorDetailDto("general", ex.getMessage()));
+        ResponseDto responseDto = new ResponseDto(errors);
+        return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-        if (err.hasErrors()) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseDto> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<ErrorDetailDto> errors = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> {
+                    String field = error instanceof FieldError ? ((FieldError) error).getField() : "general";
+                    String message = error.getDefaultMessage();
+                    return new ErrorDetailDto(field, message);
+                })
+                .collect(Collectors.toList());
 
-            // Collect validation errors and convert them to raw value pairs
-//            listErrorDetails = err.getFieldErrors().stream()
-//                    .map(error -> new String[]{error.getField(), error.getDefaultMessage()})
-//                    .collect(Collectors.toList());
-
-            listTypeErrorDetails = err.getBindingResult().getAllErrors().stream()
-                    .map(error -> new String[]{error.getDefaultMessage()})
-                    .collect(Collectors.toList());
-
-
-
-            ResponseDto responseDto = new ResponseDto(null, "VALIDATION_ERROR", listTypeErrorDetails);
-            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
-        }
-
-        ResponseDto responseDto = new ResponseDto(null, "THERE IS NO VALIDATION_ERROR", null);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        ResponseDto responseDto = new ResponseDto(errors);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(value = "/importEmployeeExcel", method = RequestMethod.POST)
@@ -94,6 +93,17 @@ public class RestEmployeeController {
 
         ImportResultDto result = employeeService.saveEmployeesFromExcel(dto);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/exportEmployeeExcel", method = RequestMethod.GET)
+    public ResponseEntity<?> exportEmployees(HttpServletResponse response) throws IOException {
+//        ByteArrayInputStream in = employeeService.export();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Disposition", "attachment; filename=employees.xlsx");
+
+        return ResponseEntity.ok(employeeService.export(response));
+
     }
 
 }

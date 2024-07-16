@@ -10,5 +10,4 @@ import java.util.List;
 @Service
 public interface MyFirstApiSercive {
     public MyFirstApiDto processMyFirstApi(MyFirstApiDto myFirstApiDto);
-    public byte[] exportToExcel(List<ExportExcelDto> dto) throws IOException;
 }

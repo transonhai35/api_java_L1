@@ -4,18 +4,18 @@ import java.util.UUID;
 
 public class EmployeeSearchDto {
 
-    private UUID id;
+    private Long id;
     private String code;
     private String name;
     private String email;
     private String phone;
     private Integer age;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

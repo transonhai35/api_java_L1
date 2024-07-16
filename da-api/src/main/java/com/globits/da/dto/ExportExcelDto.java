@@ -1,15 +1,23 @@
 package com.globits.da.dto;
 
+import org.apache.poi.ss.formula.functions.Index;
+
 public class ExportExcelDto {
 
-    private String code;
+    private int index;
     private String name;
-    private Integer Id;
+    private String code;
+    private String email;
+    private String phone;
+    private int age;
 
-    public ExportExcelDto(String code, String name, Integer Id) {
-        this.code = code;
-        this.name = name;
-        this.Id = Id;
+    public ExportExcelDto(ExportExcelDto dto) {
+        this.code = dto.getCode();
+        this.name = dto.getName();
+        this.index = dto.getIndex();
+        this.email = dto.getEmail();
+        this.phone = dto.getPhone();
+        this.age = dto.getAge();
     }
 
     public String getCode() {
@@ -28,10 +36,34 @@ public class ExportExcelDto {
         this.name = name;
     }
 
-    public Integer getId() {
-        return Id;
+    public Integer getIndex() {
+        return index;
     }
-    public void setId(Integer id) {
-        Id = id;
+    public void setId(Integer index) {
+        index = this.index;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }
